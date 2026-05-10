@@ -1,0 +1,86 @@
+# GET http://localhost:3000/user HTTP/1.1
+
+# ###
+
+# GET https://example.com/comments/1 HTTP/1.1
+
+
+//! create user
+POST http://localhost:3000/user
+Content-Type: application/json
+
+{
+  "name": "Atif",
+  "email": "atif@gmail.com",
+  "details": {
+    "gender":"male",
+    "photo":"www.test.com/photo"
+
+}
+}
+
+
+// get all users
+### 
+GET http://localhost:3000/user
+
+
+
+// get single users
+### 
+GET http://localhost:3000/user/019e1057-f9b8-74be-88ae-1cd544981122
+
+
+
+// create products
+### 
+POST http://localhost:3000/product
+Content-Type: application/json
+
+{
+  "title":"laptop",
+  "price":1212
+}
+
+
+//get products
+### 
+get http://localhost:3000/product
+
+
+
+
+//get single product
+### 
+get http://localhost:3000/product/019e1080-b585-773e-90b7-7d4c36212f0b
+
+
+
+
+
+
+
+//create Orders
+### 
+POST http://localhost:3000/order
+Content-Type: application/json
+
+{
+  "user":"019e1057-f9b8-74be-88ae-1cd544981122",
+  "lines":[
+    {
+      "product":"019e1080-b585-773e-90b7-7d4c36212f0b" 
+    }
+  ]
+}
+
+
+//get Orders
+### 
+GET  http://localhost:3000/order
+
+
+
+//get single order
+### 
+GET  http://localhost:3000/order/019e10b8-62f4-7719-aba4-74eadb1fefb0

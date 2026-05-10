@@ -10,6 +10,8 @@ import { ProductOrmEntity } from './product/entities/product.entity';
 import { OrderModule } from './order/order.module';
 import { OrderOrmEntity } from './order/entities/order.entity';
 import { OrderLineOrmEntity } from './order/entities/order-line.entity';
+import { PromoModule } from './promo/promo.module';
+import { PromoOrmEntity } from './promo/entities/promo.entity';
 
 @Module({
   imports: [
@@ -25,13 +27,15 @@ import { OrderLineOrmEntity } from './order/entities/order-line.entity';
         UserDetailsOrmEntity,
         ProductOrmEntity,
         OrderOrmEntity,
-        OrderLineOrmEntity
+        OrderLineOrmEntity,
+        PromoOrmEntity
       ],
       synchronize: true,
     }),
     UserModule,
     ProductModule,
     OrderModule,
+    PromoModule,
     
   ],
   controllers: [AppController],

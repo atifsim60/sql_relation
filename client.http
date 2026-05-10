@@ -10,8 +10,8 @@ POST http://localhost:3000/user
 Content-Type: application/json
 
 {
-  "name": "Atif",
-  "email": "atif@gmail.com",
+  "name": "test2",
+  "email": "test2@gmail.com",
   "details": {
     "gender":"male",
     "photo":"www.test.com/photo"
@@ -30,6 +30,22 @@ GET http://localhost:3000/user
 ### 
 GET http://localhost:3000/user/019e1057-f9b8-74be-88ae-1cd544981122
 
+
+
+
+
+
+// attach promos to user
+### 
+PATCH  http://localhost:3000/user/attach-promos/019e1116-7bb1-7383-b263-e4a5898dfdf7
+Content-Type: application/json
+
+{
+  "promos":[
+    "019e1122-3c14-70df-9e84-5a9d58c2f999",
+    "019e10d9-1f4f-7162-ab76-4d3db46edd27"
+  ]
+}
 
 
 // create products
@@ -84,3 +100,41 @@ GET  http://localhost:3000/order
 //get single order
 ### 
 GET  http://localhost:3000/order/019e10b8-62f4-7719-aba4-74eadb1fefb0
+
+
+
+
+
+//create promo
+### 
+POST http://localhost:3000/promo
+Content-Type: application/json
+
+{
+  "code":"may05",
+  "discount":50
+  
+}
+
+
+
+
+//create promo
+### 
+PATCH  http://localhost:3000/promo/attach-promo/019e10d9-1f4f-7162-ab76-4d3db46edd27
+Content-Type: application/json
+
+{
+  "userIds":[
+    "019e1057-f9b8-74be-88ae-1cd544981122",
+    "019e10e2-4d08-74f9-92c1-eaa5c185e10b"
+  ]
+  
+}
+
+
+
+
+//list promo
+### 
+GET http://localhost:3000/promo

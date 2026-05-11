@@ -9,20 +9,22 @@ export class OrderLineOrmEntity {
     id: string
 
 
-     @ManyToOne(() => ProductOrmEntity, (user) => user.orderLines)
-    
-     product: ProductOrmEntity;
+    @ManyToOne(() => ProductOrmEntity, (user) => user.orderLines, {
+        eager: true
+    })
+
+    product: ProductOrmEntity;
 
 
     @ManyToOne(() => OrderOrmEntity, (order) => order.orderLines)
-     order: OrderOrmEntity;
-
-     
-     @Column({type:"int"})
-     price: number
+    order: OrderOrmEntity;
 
 
-     @Column({name:"total_qty"})
-     totalQty:number
-    
+    @Column({ type: "int" })
+    price: number
+
+
+    @Column({ name: "total_qty" })
+    totalQty: number
+
 }

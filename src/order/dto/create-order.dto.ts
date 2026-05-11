@@ -2,7 +2,7 @@ import { Type } from "class-transformer";
 import { IsDefined, IsString, ValidateNested } from "class-validator";
 
 
-export class CreateOrderLineDto{
+export class CreateOrderLineDto {
     @IsString()
     product: string;
 
@@ -14,10 +14,10 @@ export class CreateOrderDto {
     user: string;
 
 
-        @IsDefined()
-        @ValidateNested({each:true})
-        @Type(() => CreateOrderLineDto)
-        lines: CreateOrderLineDto[]
+    @IsDefined()
+    @ValidateNested({ each: true })
+    @Type(() => CreateOrderLineDto)
+    lines: CreateOrderLineDto[]
 
 
 }

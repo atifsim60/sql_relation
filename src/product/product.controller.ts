@@ -22,5 +22,12 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
+
+  @Get("list-products/:orderId")
+  getProductsByOrder(
+    @Param("orderId") orderId: string
+  ){
+    return this.productService.getProductsByOrderId(orderId)
+  }
   
 }

@@ -32,6 +32,20 @@ GET http://localhost:3000/user/019e1057-f9b8-74be-88ae-1cd544981122
 
 
 
+###
+PATCH  http://localhost:3000/user/019e10e2-4d08-74f9-92c1-eaa5c185e10b
+Content-Type: application/json
+
+{
+  "name": "test23",
+  "email": "test22@gmail.com",
+  "details": {
+    "gender":"male",
+    "photo":"www.test.com/444.44"
+
+}
+}
+
 
 
 
@@ -54,8 +68,8 @@ POST http://localhost:3000/product
 Content-Type: application/json
 
 {
-  "title":"laptop",
-  "price":1212
+  "title":"iphone",
+  "price":800
 }
 
 
@@ -74,6 +88,10 @@ get http://localhost:3000/product/019e1080-b585-773e-90b7-7d4c36212f0b
 
 
 
+//get products by order
+### 
+get http://localhost:3000/product/list-products/019e156e-a081-710f-9bb1-0a807721273d
+
 
 
 //create Orders
@@ -85,8 +103,12 @@ Content-Type: application/json
   "user":"019e1057-f9b8-74be-88ae-1cd544981122",
   "lines":[
     {
-      "product":"019e1080-b585-773e-90b7-7d4c36212f0b" 
+      "product":"019e156d-6478-711d-bbae-989bdaf2c009" 
+    },
+    {
+      "product":"019e156d-91ad-72fc-bb31-4f580c76d286" 
     }
+    
   ]
 }
 
@@ -101,6 +123,10 @@ GET  http://localhost:3000/order
 ### 
 GET  http://localhost:3000/order/019e10b8-62f4-7719-aba4-74eadb1fefb0
 
+
+// list orders of products
+### 
+GET  http://localhost:3000/order/019e156d-6478-711d-bbae-989bdaf2c009/list-product
 
 
 

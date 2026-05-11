@@ -35,5 +35,22 @@ export class ProductService {
     return await this.productRepo.findOne({where:{id}})
   
   }
+
+  async getProductsByOrderId(orderId:string){
+    const products = await this.productRepo
+    .createQueryBuilder('product')
+
+    .leftJoin('product.orderLines', 'orderLine')
+
+    .leftJoin('orderLine.order', 'order')
+
+    .where('order.id = :orderId', {
+      orderId,
+    })
+
+    .getMany();
+
+    return products
+  }
  
 }

@@ -8,35 +8,36 @@ import { PromoOrmEntity } from "src/promo/entities/promo.entity";
 @Entity('user')
 export class UserOrmEntity {
 
-    @PrimaryColumn()
-    id!: string;
+  @PrimaryColumn()
+  id!: string;
 
 
-    @Column({})
-    email!: string;
+  @Column({})
+  email!: string;
 
 
-    @Column()
-    name!: string;
+  @Column()
+  name!: string;
 
-     @OneToOne(() => UserDetailsOrmEntity,{
-        cascade:true,
-        lazy:true
-     })
-    @JoinColumn({name:"user_details",
-    })
-    userDetails!: UserDetailsOrmEntity
-
-
-    
-    @OneToMany(() => OrderOrmEntity, (order) => order.user)
-    orders: OrderOrmEntity[]
-
-
-      @ManyToMany(() => PromoOrmEntity, (promo) => promo.users, {
+  @OneToOne(() => UserDetailsOrmEntity, {
     cascade: true,
-  
+    lazy: true
   })
-  @JoinTable() 
+  @JoinColumn({
+    name: "user_details",
+  })
+  userDetails?: UserDetailsOrmEntity
+
+
+
+  @OneToMany(() => OrderOrmEntity, (order) => order.user)
+  orders?: OrderOrmEntity[]
+
+
+  @ManyToMany(() => PromoOrmEntity, (promo) => promo.users, {
+    cascade: true,
+
+  })
+  @JoinTable()
   promos: PromoOrmEntity[];
 }

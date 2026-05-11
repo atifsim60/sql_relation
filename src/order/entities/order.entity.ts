@@ -9,18 +9,18 @@ export class OrderOrmEntity {
     id: string;
 
 
-   @ManyToOne(() => UserOrmEntity, (user) => user.orders)
-@JoinColumn({ name: "user_id" })
-user: UserOrmEntity;
+    @ManyToOne(() => UserOrmEntity, (user) => user.orders)
+    @JoinColumn({ name: "user_id" })
+    user: UserOrmEntity;
 
 
-    @Column({type:"int"})
-    totalPrice:number
+    @Column({ type: "int" })
+    totalPrice: number
 
 
-    @OneToMany(() => OrderLineOrmEntity, (order) => order.order,{
-        cascade:true,
-        eager:true
+    @OneToMany(() => OrderLineOrmEntity, (order) => order.order, {
+        cascade: true,
+        eager: true
     })
     orderLines: OrderLineOrmEntity[]
 

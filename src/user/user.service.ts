@@ -7,30 +7,34 @@ import { Repository } from 'typeorm';
 import { v7 as uuidv7 } from 'uuid';
 import { AttachUserDto } from './dto/attach-user.dto';
 import { PromoService } from 'src/promo/promo.service';
+import { UserDetailsOrmEntity } from './entities/user-details.entity';
 
 @Injectable()
 export class UserService {
 
   constructor(
-   @InjectRepository(UserOrmEntity)
+    @InjectRepository(UserOrmEntity)
     private readonly userRepo: Repository<UserOrmEntity>,
 
-       @Inject(forwardRef(() => PromoService))
-        private readonly promoService: PromoService
-  ){
+    @InjectRepository(UserDetailsOrmEntity)
+    private readonly userDetailsRepo: Repository<UserDetailsOrmEntity>,
+
+    @Inject(forwardRef(() => PromoService))
+    private readonly promoService: PromoService
+  ) {
 
   }
 
 
   async create(createUserDto: CreateUserDto) {
-  
+
     const body = {
       id: uuidv7(),
       name: createUserDto.name,
       email: createUserDto.email,
-      userDetails:{
-         id: uuidv7(),
-         ...createUserDto.details
+      userDetails: {
+        id: uuidv7(),
+        ...createUserDto.details
       }
     }
 
@@ -38,26 +42,65 @@ export class UserService {
   }
 
   async findAll() {
-    const users =  await this.userRepo.find()
+    const users = await this.userRepo.find()
 
-    if(true){
-     
-for (const user of users) {
-  user.userDetails = await user.userDetails;
-}
+    if (true) {
+
+      for (const user of users) {
+        user.userDetails = await user.userDetails;
+      }
     }
 
     return users
   }
 
-  async  findOne(id: string) {
-    return await this.userRepo.findOne({where:{id},
-    relations:["userDetails"]})
+  async findOne(id: string) {
+    return await this.userRepo.findOne({
+      where: { id },
+      relations: ["userDetails"]
+    })
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+
+    const user = await this.userRepo.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new BadRequestException("user not found");
+    }
+
+    if (updateUserDto.email !== undefined) {
+      user.email = updateUserDto.email;
+    }
+
+    if (updateUserDto.name !== undefined) {
+      user.name = updateUserDto.name;
+    }
+
+    const details = updateUserDto.details;
+
+    if (details) {
+
+      const existingDetails = await user.userDetails;
+
+      if (existingDetails) {
+        existingDetails.gender = details.gender;
+        existingDetails.photo = details.photo;
+      } else {
+        user.userDetails = Promise.resolve(
+          this.userDetailsRepo.create({
+            id: uuidv7(),
+            ...details,
+          }),
+        ) as any;
+      }
+    }
+
+    return this.userRepo.save(user);
   }
+
 
   remove(id: number) {
     return `This action removes a #${id} user`;
@@ -65,25 +108,27 @@ for (const user of users) {
 
 
 
-  async attachUser(userId: string, dto:AttachUserDto){
-   
-    const  userExist = await  this.userRepo.findOne({where:{id:userId},
-    relations:["promos"]})
+  async attachUser(userId: string, dto: AttachUserDto) {
 
-    if(!userExist){
-        throw new BadRequestException("user not found")
+    const userExist = await this.userRepo.findOne({
+      where: { id: userId },
+      relations: ["promos"]
+    })
+
+    if (!userExist) {
+      throw new BadRequestException("user not found")
     }
 
-    const promos  = await Promise.all(
-      dto.promos.map((promo)=>{
+    const promos = await Promise.all(
+      dto.promos.map((promo) => {
         return this.promoService.findOne(promo)
       })
     )
-    
 
-    userExist.promos=[
+
+    userExist.promos = [
       ...userExist.promos,
-      ...promos.filter(c => c !==null)
+      ...promos.filter(c => c !== null)
     ]
 
 

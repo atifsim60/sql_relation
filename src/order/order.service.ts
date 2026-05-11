@@ -3,7 +3,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ProductService } from 'src/product/product.service';
 import { UserService } from 'src/user/user.service';
-import { v7 as uuidV7} from "uuid"
+import { v7 as uuidV7 } from "uuid"
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderOrmEntity } from './entities/order.entity';
 import { Repository } from 'typeorm';
@@ -14,58 +14,58 @@ export class OrderService {
 
 
   constructor(
-    
-    private readonly productService : ProductService,
-    private readonly userService :UserService,
 
-    @InjectRepository(OrderOrmEntity) 
-    private readonly orderRepo : Repository<OrderOrmEntity>,
+    private readonly productService: ProductService,
+    private readonly userService: UserService,
 
-      @InjectRepository(OrderLineOrmEntity) 
-    private readonly orderLineRepo : Repository<OrderLineOrmEntity>
-  ){}
+    @InjectRepository(OrderOrmEntity)
+    private readonly orderRepo: Repository<OrderOrmEntity>,
+
+    @InjectRepository(OrderLineOrmEntity)
+    private readonly orderLineRepo: Repository<OrderLineOrmEntity>
+  ) { }
 
 
 
- async create(createOrderDto: CreateOrderDto) {
+  async create(createOrderDto: CreateOrderDto) {
 
-  const userExist = await this.userService.findOne(createOrderDto.user)
+    const userExist = await this.userService.findOne(createOrderDto.user)
 
-  if(!userExist) throw new NotFoundException("user does not exist")
+    if (!userExist) throw new NotFoundException("user does not exist")
 
 
     const products = await Promise.all(
-      createOrderDto.lines.map((line)=>{
+      createOrderDto.lines.map((line) => {
         return this.productService.findOne(line.product)
       })
     )
 
 
- const order = this.orderRepo.create({
-  id: uuidV7(),
-  user: userExist,
-  totalPrice: 100,
-});
+    const order = this.orderRepo.create({
+      id: uuidV7(),
+      user: userExist,
+      totalPrice: 100,
+    });
 
-order.orderLines = products.map((product) => {
-  if (!product) {
-    throw new NotFoundException("Product not found");
-  }
+    order.orderLines = products.map((product) => {
+      if (!product) {
+        throw new NotFoundException("Product not found");
+      }
 
-  if (product.price == null) {
-    throw new BadRequestException("Invalid product price");
-  }
+      if (product.price == null) {
+        throw new BadRequestException("Invalid product price");
+      }
 
-  return this.orderLineRepo.create({
-    id: uuidV7(),
-    product: product,
-    price: product.price,
-    totalQty: 1,
-    order: order,
-  });
-});
+      return this.orderLineRepo.create({
+        id: uuidV7(),
+        product: product,
+        price: product.price,
+        totalQty: 1,
+        order: order,
+      });
+    });
 
-return this.orderRepo.save(order);
+    return this.orderRepo.save(order);
 
   }
 
@@ -74,7 +74,7 @@ return this.orderRepo.save(order);
   }
 
   async findOne(id: string) {
-    return await this.orderRepo.findOne({where:{id}})
+    return await this.orderRepo.findOne({ where: { id } })
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {
@@ -83,5 +83,21 @@ return this.orderRepo.save(order);
 
   remove(id: number) {
     return `This action removes a #${id} order`;
+  }
+
+  async getOrdersByProduct(productId: string) {
+    const orders = await this.orderRepo
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.orderLines', 'orderLine')
+      .leftJoinAndSelect('orderLine.product', 'product')
+      .leftJoin('order.user', 'user')
+      .addSelect([
+        // 'user.id',
+        'user.name',
+      ])
+      .where('product.id = :productId', { productId })
+      .getMany();
+
+    return orders
   }
 }

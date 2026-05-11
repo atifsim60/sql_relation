@@ -22,6 +22,13 @@ export class OrderController {
     return this.orderService.findOne(id);
   }
 
+  @Get(":id/list-product")
+  listProduct(
+    @Param("id")productId: string
+  ){
+    return this.orderService.getOrdersByProduct(productId)
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
     return this.orderService.update(+id, updateOrderDto);

@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OrderOrmEntity } from './entities/order.entity';
 import { Repository } from 'typeorm';
 import { OrderLineOrmEntity } from './entities/order-line.entity';
+import { ActionEnum } from 'src/enum/action.enum';
 
 @Injectable()
 export class OrderService {
@@ -77,10 +78,32 @@ export class OrderService {
     return await this.orderRepo.findOne({ where: { id } })
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
-  }
+  async update(id: string, updateOrderDto: UpdateOrderDto) {
+    const orderExist = await this.orderRepo.findOne({
+      where: { id },
+      relations: {
+        orderLines: true,
+      },
+    });
 
+    if (!orderExist) {
+      throw new NotFoundException("order not found");
+    }
+
+    if (updateOrderDto.action === ActionEnum.REMOVE) {
+
+      const productIds = updateOrderDto?.lines?.map(
+        (line) => line.product,
+      );
+      orderExist.orderLines = orderExist.orderLines.filter(
+        (item) => !productIds?.includes(item.product.id),
+      );
+
+    }
+
+
+    return await this.orderRepo.save(orderExist);
+  }
   remove(id: number) {
     return `This action removes a #${id} order`;
   }

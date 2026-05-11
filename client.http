@@ -1,112 +1,108 @@
 # GET http://localhost:3000/user HTTP/1.1
 
-# ###
+###
 
 # GET https://example.com/comments/1 HTTP/1.1
 
+###
 
-//! create user
+# Create user
 POST http://localhost:3000/user
 Content-Type: application/json
 
 {
-  "name": "test2",
-  "email": "test2@gmail.com",
+  "name": "test24",
+  "email": "test24@gmail.com",
   "details": {
-    "gender":"male",
-    "photo":"www.test.com/photo"
-
+    "gender": "male",
+    "photo": "www.test.com/photo"
+  }
 }
-}
-
-
-// get all users
-### 
-GET http://localhost:3000/user
-
-
-
-// get single users
-### 
-GET http://localhost:3000/user/019e1057-f9b8-74be-88ae-1cd544981122
-
-
 
 ###
-PATCH  http://localhost:3000/user/019e10e2-4d08-74f9-92c1-eaa5c185e10b
+
+# Get all users
+GET http://localhost:3000/user
+
+###
+
+# Get single user
+GET http://localhost:3000/user/019e1057-f9b8-74be-88ae-1cd544981122
+
+###
+
+# Update user
+PATCH http://localhost:3000/user/019e15dc-7049-767e-bb9d-f8143ccfddab
 Content-Type: application/json
 
 {
   "name": "test23",
-  "email": "test22@gmail.com",
+  "email": "test223@gmail.com",
   "details": {
-    "gender":"male",
-    "photo":"www.test.com/444.44"
-
+    "gender": "male",
+    "photo": "www.test.com/444.44"
+  }
 }
-}
+
+
+###
+
+# delete user
+DELETE  http://localhost:3000/user/019e1619-ee5a-76ee-ab06-26310c8ca498
+Content-Type: application/json
 
 
 
+###
 
-// attach promos to user
-### 
-PATCH  http://localhost:3000/user/attach-promos/019e1116-7bb1-7383-b263-e4a5898dfdf7
+# Attach promos to user
+PATCH http://localhost:3000/user/attach-promos/019e1116-7bb1-7383-b263-e4a5898dfdf7
 Content-Type: application/json
 
 {
-  "promos":[
+  "promos": [
     "019e1122-3c14-70df-9e84-5a9d58c2f999",
     "019e10d9-1f4f-7162-ab76-4d3db46edd27"
   ]
 }
 
+###
 
-// create products
-### 
+# Create product
 POST http://localhost:3000/product
 Content-Type: application/json
 
 {
-  "title":"iphone",
-  "price":800
+  "title": "iphone",
+  "price": 800
 }
 
+###
 
-//get products
-### 
-get http://localhost:3000/product
+# Get products
+GET http://localhost:3000/product
 
+###
 
+# Get single product
+GET http://localhost:3000/product/019e1080-b585-773e-90b7-7d4c36212f0b
 
+###
 
-//get single product
-### 
-get http://localhost:3000/product/019e1080-b585-773e-90b7-7d4c36212f0b
+# Get products by order
+GET http://localhost:3000/product/list-products/019e156e-a081-710f-9bb1-0a807721273d
 
+###
 
-
-
-
-//get products by order
-### 
-get http://localhost:3000/product/list-products/019e156e-a081-710f-9bb1-0a807721273d
-
-
-
-//create Orders
-### 
+# Create order
 POST http://localhost:3000/order
 Content-Type: application/json
 
 {
-  "user":"019e1057-f9b8-74be-88ae-1cd544981122",
+  "user":"019e161a-9414-7086-aa9d-f9e795bf8c15",
   "lines":[
     {
-      "product":"019e156d-6478-711d-bbae-989bdaf2c009" 
-    },
-    {
-      "product":"019e156d-91ad-72fc-bb31-4f580c76d286" 
+      "product":"019e1658-9775-717d-bd5d-f71b798ffae5" 
     }
     
   ]
@@ -121,7 +117,7 @@ GET  http://localhost:3000/order
 
 //get single order
 ### 
-GET  http://localhost:3000/order/019e10b8-62f4-7719-aba4-74eadb1fefb0
+GET  http://localhost:3000/order/019e1676-1c3f-71ae-9a7a-642cf08e5784
 
 
 // list orders of products
@@ -129,6 +125,20 @@ GET  http://localhost:3000/order/019e10b8-62f4-7719-aba4-74eadb1fefb0
 GET  http://localhost:3000/order/019e156d-6478-711d-bbae-989bdaf2c009/list-product
 
 
+// update order
+### 
+PATCH  http://localhost:3000/order/019e1676-1c3f-71ae-9a7a-642cf08e5784
+Content-Type: application/json
+
+{
+  "action":"remove",
+  "lines":[
+    {
+      "product":"019e1658-9775-717d-bd5d-f71b798ffae5" 
+    }
+    
+  ]
+}
 
 
 //create promo

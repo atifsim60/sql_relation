@@ -20,7 +20,8 @@ export class OrderOrmEntity {
 
     @OneToMany(() => OrderLineOrmEntity, (order) => order.order, {
         cascade: true,
-        eager: true
+        eager: true,
+        orphanedRowAction: 'delete',
     })
     orderLines: OrderLineOrmEntity[]
 

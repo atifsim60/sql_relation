@@ -27,18 +27,17 @@ export class UserService {
 
 
   async create(createUserDto: CreateUserDto) {
-
-    const body = {
+    const user = this.userRepo.create({
       id: uuidv7(),
       name: createUserDto.name,
       email: createUserDto.email,
       userDetails: {
         id: uuidv7(),
-        ...createUserDto.details
-      }
-    }
+        ...createUserDto.details,
+      },
+    });
 
-    return await this.userRepo.save(body)
+    return await this.userRepo.save(user);
   }
 
   async findAll() {
@@ -102,8 +101,9 @@ export class UserService {
   }
 
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+
+    return await this.userRepo.delete({ id })
   }
 
 

@@ -16,7 +16,9 @@ export class OrderLineOrmEntity {
     product: ProductOrmEntity;
 
 
-    @ManyToOne(() => OrderOrmEntity, (order) => order.orderLines)
+    @ManyToOne(() => OrderOrmEntity, (order) => order.orderLines, {
+        onDelete: "CASCADE",
+    })
     order: OrderOrmEntity;
 
 

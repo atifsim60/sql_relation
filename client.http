@@ -165,11 +165,25 @@ PATCH http://localhost:3000/order/019e1a9e-0480-742c-8346-90ae1da93454
 Content-Type: application/json
 
 {
-  "action": "add",
   "lines": [
+    # {
+    #   "product": "019e1abe-89c7-71ea-92b3-62410b14b84f",
+    #   "qty": 5
+    # },
+    # {
+    #   "product": "019e1a9d-d384-7210-9212-b2f5b7400089",
+    #   "qty": 55
+    # }
+
+
     {
-      "product": "019e1abe-89c7-71ea-92b3-62410b14b84f"
+      "id": "019e1b29-acf0-774f-a25d-8211be629517"
+    
     }
+    # {
+    #   "id": "019e1b29-acf0-774f-a25d-8211be629517",
+    #   "qty": 951235
+    # }
   ]
 }
 

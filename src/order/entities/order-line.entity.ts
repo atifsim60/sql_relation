@@ -27,8 +27,8 @@ export class OrderLineOrmEntity {
     @Column({ type: "int" })
     price: number;
 
-    @Column({ name: "total_qty" })
-    totalQty: number;
+    @Column({ name: "qty" })
+    qty: number;
 
     @DeleteDateColumn()
     deletedAt: Date;

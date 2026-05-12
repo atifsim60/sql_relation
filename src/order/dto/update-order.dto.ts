@@ -1,27 +1,26 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
 import { ActionEnum } from "src/enum/action.enum";
 
 export class UpdateOrderLineDto {
 
     @IsOptional()
-    @IsString()
-    id: string;
+    @IsUUID("7")
+    id?: string;
 
     @IsOptional()
-    @IsString()
+    @IsUUID("7")
     product?: string;
 
     @IsOptional()
     @IsNumber()
-    totalQty?: number;
+    qty?: number;
 }
 
 
 export class UpdateOrderDto {
 
-    @IsEnum(ActionEnum)
-    action: ActionEnum;
+
 
     @IsOptional()
-    lines?: UpdateOrderLineDto[];
+    lines: UpdateOrderLineDto[];
 }

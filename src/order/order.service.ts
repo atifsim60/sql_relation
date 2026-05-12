@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { UpdateOrderDto, UpdateOrderLineDto } from './dto/update-order.dto';
 import { ProductService } from 'src/product/product.service';
 import { UserService } from 'src/user/user.service';
 import { v7 as uuidV7 } from "uuid"
@@ -9,7 +9,6 @@ import { OrderOrmEntity } from './entities/order.entity';
 import { Repository } from 'typeorm';
 import { OrderLineOrmEntity } from './entities/order-line.entity';
 import { ActionEnum } from 'src/enum/action.enum';
-import { UpdateOrderLineDto } from './dto/update-order-line.dto';
 
 @Injectable()
 export class OrderService {
@@ -62,7 +61,7 @@ export class OrderService {
         id: uuidV7(),
         product: product,
         price: product.price,
-        totalQty: 1,
+        qty: 1,
         order: order,
       });
     });
@@ -109,71 +108,84 @@ export class OrderService {
       throw new NotFoundException("order not found");
     }
 
+    const lines = updateOrderDto.lines ?? [];
 
-    if (updateOrderDto.action === ActionEnum.REMOVE) {
+    const toDelete: string[] = [];
+    const toUpdate: UpdateOrderLineDto[] = [];
+    const toCreate: UpdateOrderLineDto[] = [];
 
-      const orderLineIds =
-        updateOrderDto.lines?.map((line) => line.id) ?? [];
+    for (const line of lines) {
 
+      if (line.id && !line.product && !line.qty) {
+        if (!await this.orderLineRepo.findOne({ where: { id: line.id } })) {
+          throw new NotFoundException(line.id + "line id not exist")
+        }
+        toDelete.push(line.id);
+        continue;
+      }
+
+      if (line.id && line.qty != null) {
+
+        if (!await this.orderLineRepo.findOne({ where: { id: line.id } })) {
+          throw new NotFoundException(line.id + "line id not exist")
+        }
+
+
+        toUpdate.push(line);
+        continue;
+      }
+
+      if (!line.id && line.product) {
+        toCreate.push(line);
+        continue;
+      }
+    }
+
+
+
+    if (toDelete.length > 0) {
       orderExist.orderLines = orderExist.orderLines.filter(
-        (item) => !orderLineIds.includes(item.id),
+        (line) => !toDelete.includes(line.id),
       );
     }
 
+    for (const line of toUpdate) {
 
-    if (updateOrderDto.action === ActionEnum.ADD) {
-
-      const lines = updateOrderDto.lines ?? [];
-
-      const products = await Promise.all(
-        lines.map((line) => {
-          return this.productService.findOne(line.product!);
-        }),
+      const existing = orderExist.orderLines.find(
+        (l) => l.id === line.id,
       );
 
-      const newOrderLines = products.map((product) => {
+      if (!existing) {
+        throw new NotFoundException(`order line ${line.id} not found`);
+      }
 
-        if (!product) {
-          throw new NotFoundException("product not found");
-        }
-
-        return this.orderLineRepo.create({
-          id: uuidV7(),
-          product: product,
-          price: product.price,
-          totalQty: 1,
-          order: orderExist,
-        });
-      });
-
-      orderExist.orderLines.push(...newOrderLines);
+      if (line.qty != null) {
+        existing.qty = line.qty;
+      }
     }
 
+    for (const line of toCreate) {
 
-    if (updateOrderDto.action === ActionEnum.UPDATE_LINE) {
+      const product = await this.productService.findOne(line.product!);
 
-      const lines = updateOrderDto.lines ?? [];
+      if (!product) {
+        throw new BadRequestException("product not found");
+      }
 
-      lines.forEach((line) => {
-
-        const orderLineExist = orderExist.orderLines.find(
-          (item) => item.id === line.id,
-        );
-
-        if (!orderLineExist) {
-          throw new NotFoundException(
-            `order line ${line.id} not found`,
-          );
-        }
-
-        if (line.totalQty != null) {
-          orderLineExist.totalQty = line.totalQty;
-        }
+      const newOrderLine = this.orderLineRepo.create({
+        id: uuidV7(),
+        product,
+        price: product.price,
+        qty: line.qty ?? 1,
+        order: orderExist,
       });
+
+      orderExist.orderLines.push(newOrderLine);
     }
 
-    return await this.orderRepo.save(orderExist);
+    return this.orderRepo.save(orderExist);
   }
+
 
   remove(id: number) {
     return `This action removes a #${id} order`;

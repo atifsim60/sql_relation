@@ -46,7 +46,7 @@ export class UserController {
   }
 
 
-  @Patch("remove-details/:id")
+  @Delete("remove-details/:id")
   removeDetails(@Param('id') id: string,) {
     return this.userService.removeDetails(id);
   }

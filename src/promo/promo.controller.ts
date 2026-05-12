@@ -6,7 +6,7 @@ import { AttachPromoDto } from './dto/attach-promo.dto';
 
 @Controller('promo')
 export class PromoController {
-  constructor(private readonly promoService: PromoService) {}
+  constructor(private readonly promoService: PromoService) { }
 
   @Post()
   create(@Body() createPromoDto: CreatePromoDto) {
@@ -25,21 +25,21 @@ export class PromoController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePromoDto: UpdatePromoDto) {
-    return this.promoService.update(+id, updatePromoDto);
+    return this.promoService.update(id, updatePromoDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.promoService.remove(+id);
+    return this.promoService.remove(id);
   }
 
-@Patch("attach-promo/:id")
-attachPromo(
-  @Param("id") id: string,
-  @Body() dto: AttachPromoDto,
-) {
-  return this.promoService.attachPromo(id, dto);
-}
+  @Patch("attach-promo/:id")
+  attachPromo(
+    @Param("id") id: string,
+    @Body() dto: AttachPromoDto,
+  ) {
+    return this.promoService.attachPromo(id, dto);
+  }
 
 
 }

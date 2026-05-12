@@ -43,13 +43,7 @@ Content-Type: application/json
 ###
 
 ### Remove user details
-PATCH http://localhost:3000/user/remove-details/019e16e7-9c6a-77f9-9029-6d87bca3383f
-Content-Type: application/json
-
-{
-  "name": "test23",
-  "email": "test223@gmail.com"
-}
+DELETE  http://localhost:3000/user/remove-details/019e161a-9414-7086-aa9d-f9e795bf8c15
 
 ###
 
@@ -177,3 +171,19 @@ Content-Type: application/json
 
 ### Get all promos
 GET http://localhost:3000/promo
+
+
+
+
+### update promo code
+PATCH  http://localhost:3000/promo/019e167b-54b6-73eb-9758-cfbd49ff4880
+Content-Type: application/json
+
+{
+  "code": "mayw09"
+}
+
+
+
+### update promo code
+DELETE  http://localhost:3000/promo/019e167b-54b6-73eb-9758-cfbd49ff4880

@@ -144,10 +144,11 @@ export class UserService {
       throw new NotFoundException("user not found")
     }
 
-    console.log(userExist)
 
-
-    userExist.userDetails = null
+    await this.userRepo.manager.delete(
+      UserDetailsOrmEntity,
+      id,
+    );
 
     return await this.userRepo.save(userExist)
   }

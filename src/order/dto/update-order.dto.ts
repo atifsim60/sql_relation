@@ -14,6 +14,10 @@ export class UpdateOrderLineDto {
     @IsOptional()
     @IsNumber()
     qty?: number;
+
+    @IsOptional()
+    @IsNumber()
+    price?: number
 }
 
 
@@ -22,5 +26,5 @@ export class UpdateOrderDto {
 
 
     @IsOptional()
-    lines: UpdateOrderLineDto[];
+    lines!: UpdateOrderLineDto[];
 }

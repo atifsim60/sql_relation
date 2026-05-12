@@ -95,6 +95,7 @@ export class OrderService {
 
   async update(id: string, updateOrderDto: UpdateOrderDto) {
 
+
     const orderExist = await this.orderRepo.findOne({
       where: { id },
       relations: {
@@ -110,78 +111,69 @@ export class OrderService {
 
     const lines = updateOrderDto.lines ?? [];
 
-    const toDelete: string[] = [];
-    const toUpdate: UpdateOrderLineDto[] = [];
-    const toCreate: UpdateOrderLineDto[] = [];
+
 
     for (const line of lines) {
+      const { id, product, ...rest } = line;
 
-      if (line.id && !line.product && !line.qty) {
-        if (!await this.orderLineRepo.findOne({ where: { id: line.id } })) {
-          throw new NotFoundException(line.id + "line id not exist")
+      if (id && product) {
+        throw new BadRequestException("id and product cannot be sent together")
+      }
+
+      const isKeyExist = Object.keys(rest).length;
+
+      if (id && !isKeyExist) {
+
+        const orderLineindex = orderExist.orderLines.findIndex(
+          (item) => item.id === line.id
+        )
+
+
+        if (orderLineindex === -1) {
+          throw new NotFoundException(`line id ${line.id} not found in order line`)
         }
-        toDelete.push(line.id);
-        continue;
+
+
+        orderExist.orderLines.splice(orderLineindex, 1);
+
       }
+      if (!id && product) {
 
-      if (line.id && line.qty != null) {
 
-        if (!await this.orderLineRepo.findOne({ where: { id: line.id } })) {
-          throw new NotFoundException(line.id + "line id not exist")
+        const product = await this.productService.findOne(line.product!);
+
+        if (!product) {
+          throw new BadRequestException("product not found");
         }
 
+        const newOrderLine = this.orderLineRepo.create({
+          id: uuidV7(),
+          product,
+          price: product.price,
+          qty: line.qty ?? 1,
+          order: orderExist,
+        });
 
-        toUpdate.push(line);
-        continue;
+        orderExist.orderLines.push(newOrderLine);
       }
+      if (id && isKeyExist) {
 
-      if (!line.id && line.product) {
-        toCreate.push(line);
-        continue;
-      }
-    }
+        const orderLine = orderExist.orderLines.find(
+          (item) => item.id === line.id
+        );
 
+        if (!orderLine) {
+          throw new NotFoundException(
+            `line id ${line.id} not found in order line`
+          );
+        }
 
+        const { product, ...updatableFields } = line;
 
-    if (toDelete.length > 0) {
-      orderExist.orderLines = orderExist.orderLines.filter(
-        (line) => !toDelete.includes(line.id),
-      );
-    }
-
-    for (const line of toUpdate) {
-
-      const existing = orderExist.orderLines.find(
-        (l) => l.id === line.id,
-      );
-
-      if (!existing) {
-        throw new NotFoundException(`order line ${line.id} not found`);
-      }
-
-      if (line.qty != null) {
-        existing.qty = line.qty;
+        Object.assign(orderLine, updatableFields);
       }
     }
 
-    for (const line of toCreate) {
-
-      const product = await this.productService.findOne(line.product!);
-
-      if (!product) {
-        throw new BadRequestException("product not found");
-      }
-
-      const newOrderLine = this.orderLineRepo.create({
-        id: uuidV7(),
-        product,
-        price: product.price,
-        qty: line.qty ?? 1,
-        order: orderExist,
-      });
-
-      orderExist.orderLines.push(newOrderLine);
-    }
 
     return this.orderRepo.save(orderExist);
   }

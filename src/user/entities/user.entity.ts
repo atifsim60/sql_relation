@@ -35,7 +35,10 @@ export class UserOrmEntity {
 
   @ManyToMany(() => PromoOrmEntity, (promo) => promo.users, {
     cascade: true,
+    onDelete: "CASCADE",
   })
-  @JoinTable()
+  @JoinTable({
+    name:"join_table_promo_user"
+  })
   promos!: PromoOrmEntity[];
 }

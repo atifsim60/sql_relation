@@ -9,6 +9,7 @@ import { OrderOrmEntity } from './entities/order.entity';
 import { Repository } from 'typeorm';
 import { OrderLineOrmEntity } from './entities/order-line.entity';
 import { ActionEnum } from 'src/enum/action.enum';
+import { UpdateOrderLineDto } from './dto/update-order-line.dto';
 
 @Injectable()
 export class OrderService {
@@ -93,7 +94,6 @@ export class OrderService {
     })
   }
 
-
   async update(id: string, updateOrderDto: UpdateOrderDto) {
 
     const orderExist = await this.orderRepo.findOne({
@@ -102,7 +102,6 @@ export class OrderService {
         orderLines: {
           product: true,
         },
-
       },
     });
 
@@ -110,16 +109,67 @@ export class OrderService {
       throw new NotFoundException("order not found");
     }
 
+
     if (updateOrderDto.action === ActionEnum.REMOVE) {
 
-      const productIds = updateOrderDto?.lines?.map(
-        (line) => line.product,
-      );
+      const orderLineIds =
+        updateOrderDto.lines?.map((line) => line.id) ?? [];
 
       orderExist.orderLines = orderExist.orderLines.filter(
-        (item) => !productIds?.includes(item.product.id),
+        (item) => !orderLineIds.includes(item.id),
+      );
+    }
+
+
+    if (updateOrderDto.action === ActionEnum.ADD) {
+
+      const lines = updateOrderDto.lines ?? [];
+
+      const products = await Promise.all(
+        lines.map((line) => {
+          return this.productService.findOne(line.product!);
+        }),
       );
 
+      const newOrderLines = products.map((product) => {
+
+        if (!product) {
+          throw new NotFoundException("product not found");
+        }
+
+        return this.orderLineRepo.create({
+          id: uuidV7(),
+          product: product,
+          price: product.price,
+          totalQty: 1,
+          order: orderExist,
+        });
+      });
+
+      orderExist.orderLines.push(...newOrderLines);
+    }
+
+
+    if (updateOrderDto.action === ActionEnum.UPDATE_LINE) {
+
+      const lines = updateOrderDto.lines ?? [];
+
+      lines.forEach((line) => {
+
+        const orderLineExist = orderExist.orderLines.find(
+          (item) => item.id === line.id,
+        );
+
+        if (!orderLineExist) {
+          throw new NotFoundException(
+            `order line ${line.id} not found`,
+          );
+        }
+
+        if (line.totalQty != null) {
+          orderLineExist.totalQty = line.totalQty;
+        }
+      });
     }
 
     return await this.orderRepo.save(orderExist);
@@ -144,4 +194,7 @@ export class OrderService {
 
     return orders
   }
+
+
+
 }

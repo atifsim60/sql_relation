@@ -73,7 +73,7 @@ POST http://localhost:3000/product
 Content-Type: application/json
 
 {
-  "title": "iphone",
+  "title": "mac",
   "price": 800
 }
 
@@ -93,6 +93,23 @@ GET http://localhost:3000/product/019e1080-b585-773e-90b7-7d4c36212f0b
 GET http://localhost:3000/product/list-products/019e156e-a081-710f-9bb1-0a807721273d
 
 
+
+### update product 
+PATCH http://localhost:3000/product/019e1658-9775-717d-bd5d-f71b798ffae5
+Content-Type: application/json
+
+{
+  "title": "product updated",
+  "price": 800
+}
+
+
+
+### delete product 
+DELETE  http://localhost:3000/product/019e1658-9775-717d-bd5d-f71b798ffae5
+
+
+
 ########################################
 # ORDER
 ########################################
@@ -105,7 +122,7 @@ Content-Type: application/json
   "user": "019e161a-9414-7086-aa9d-f9e795bf8c15",
   "lines": [
     {
-      "product": "019e1658-9775-717d-bd5d-f71b798ffae5"
+      "product": "019e1a9d-d384-7210-9212-b2f5b7400089"
     }
   ]
 }
@@ -127,15 +144,47 @@ GET http://localhost:3000/order/019e156d-6478-711d-bbae-989bdaf2c009/list-produc
 
 ###
 
-### Update order (remove product)
-PATCH http://localhost:3000/order/019e1a59-4751-7129-823c-e67768f5326b
+
+### remove line
+PATCH http://localhost:3000/order/019e1a9e-0480-742c-8346-90ae1da93454
 Content-Type: application/json
 
 {
   "action": "remove",
   "lines": [
     {
-      "product": "019e1658-9775-717d-bd5d-f71b798ffae5"
+      "id": "019e1ac2-5556-744f-a997-2e361c5301fd"
+    }
+  ]
+}
+
+
+### add new line to order
+
+PATCH http://localhost:3000/order/019e1a9e-0480-742c-8346-90ae1da93454
+Content-Type: application/json
+
+{
+  "action": "add",
+  "lines": [
+    {
+      "product": "019e1abe-89c7-71ea-92b3-62410b14b84f"
+    }
+  ]
+}
+
+
+### update line
+
+PATCH http://localhost:3000/order/019e1a9e-0480-742c-8346-90ae1da93454
+Content-Type: application/json
+
+{
+  "action": "update_line",
+  "lines": [
+    {
+      "id": "019e1ac2-5556-744f-a997-2e361c5301fd",
+      "totalQty": 20
     }
   ]
 }
@@ -185,5 +234,5 @@ Content-Type: application/json
 
 
 
-### update promo code
+### delete promo code
 DELETE  http://localhost:3000/promo/019e167b-54b6-73eb-9758-cfbd49ff4880

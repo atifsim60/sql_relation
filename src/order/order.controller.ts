@@ -2,10 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { UpdateOrderLineDto } from './dto/update-order-line.dto';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) { }
 
   @Post()
   create(@Body() createOrderDto: CreateOrderDto) {
@@ -24,8 +25,8 @@ export class OrderController {
 
   @Get(":id/list-product")
   listProduct(
-    @Param("id")productId: string
-  ){
+    @Param("id") productId: string
+  ) {
     return this.orderService.getOrdersByProduct(productId)
   }
 
@@ -38,4 +39,7 @@ export class OrderController {
   remove(@Param('id') id: string) {
     return this.orderService.remove(+id);
   }
+
+
+
 }

@@ -1,15 +1,27 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateOrderDto } from './create-order.dto';
-import { IsEnum } from 'class-validator';
-import { ActionEnum } from 'src/enum/action.enum';
+import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { ActionEnum } from "src/enum/action.enum";
+
+export class UpdateOrderLineDto {
+
+    @IsOptional()
+    @IsString()
+    id: string;
+
+    @IsOptional()
+    @IsString()
+    product?: string;
+
+    @IsOptional()
+    @IsNumber()
+    totalQty?: number;
+}
 
 
-
-export class UpdateOrderDto extends PartialType(CreateOrderDto) {
-
+export class UpdateOrderDto {
 
     @IsEnum(ActionEnum)
-    action: ActionEnum
+    action: ActionEnum;
 
-
+    @IsOptional()
+    lines?: UpdateOrderLineDto[];
 }

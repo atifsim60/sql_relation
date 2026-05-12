@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { v7 as uuidV7} from "uuid"
+import { v7 as uuidV7 } from "uuid"
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductOrmEntity } from './entities/product.entity';
 import { Repository } from 'typeorm';
@@ -13,8 +13,8 @@ export class ProductService {
   constructor(
     @InjectRepository(ProductOrmEntity)
 
-    private readonly productRepo : Repository<ProductOrmEntity>
-  ){
+    private readonly productRepo: Repository<ProductOrmEntity>
+  ) {
 
   }
 
@@ -32,25 +32,52 @@ export class ProductService {
   }
 
   async findOne(id: string) {
-    return await this.productRepo.findOne({where:{id}})
-  
+    return await this.productRepo.findOne({ where: { id } })
+
   }
 
-  async getProductsByOrderId(orderId:string){
+  async getProductsByOrderId(orderId: string) {
     const products = await this.productRepo
-    .createQueryBuilder('product')
+      .createQueryBuilder('product')
 
-    .leftJoin('product.orderLines', 'orderLine')
+      .leftJoin('product.orderLines', 'orderLine')
 
-    .leftJoin('orderLine.order', 'order')
+      .leftJoin('orderLine.order', 'order')
 
-    .where('order.id = :orderId', {
-      orderId,
-    })
+      .where('order.id = :orderId', {
+        orderId,
+      })
 
-    .getMany();
+      .getMany();
 
     return products
   }
- 
+
+
+
+  async updateProduct(id: string, updateProductDto: UpdateProductDto) {
+
+    const productExist = await this.productRepo.findOne({ where: { id } })
+
+    if (!productExist) {
+      throw new BadRequestException("product not exist")
+    }
+
+
+    if (updateProductDto.title) {
+      productExist.title = updateProductDto.title
+    }
+
+
+    return await this.productRepo.save(productExist)
+
+  }
+
+
+  async removeProduct(id: string) {
+
+
+    return this.productRepo.delete({ id })
+  }
+
 }

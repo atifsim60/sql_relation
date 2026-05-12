@@ -1,6 +1,7 @@
 import { ProductOrmEntity } from "src/product/entities/product.entity";
 import {
     Column,
+    DeleteDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
@@ -18,7 +19,7 @@ export class OrderLineOrmEntity {
     product: ProductOrmEntity;
 
     @ManyToOne(() => OrderOrmEntity, (order) => order.orderLines, {
-         orphanedRowAction: 'delete',
+        orphanedRowAction: 'soft-delete',
     })
     @JoinColumn({ name: "order_id" })
     order: OrderOrmEntity;
@@ -28,4 +29,7 @@ export class OrderLineOrmEntity {
 
     @Column({ name: "total_qty" })
     totalQty: number;
+
+    @DeleteDateColumn()
+    deletedAt: Date;
 }

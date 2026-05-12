@@ -21,6 +21,7 @@ export class UserDetailsOrmEntity {
 
     @OneToOne(() => UserOrmEntity, (user) => user.userDetails, {
         onDelete: "CASCADE",
+        // orphanedRowAction: "delete"
     })
     @JoinColumn()
     user!: UserOrmEntity;

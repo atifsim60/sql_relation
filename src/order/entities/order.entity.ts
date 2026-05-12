@@ -1,29 +1,29 @@
 import { UserOrmEntity } from "src/user/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryColumn,
+} from "typeorm";
 import { OrderLineOrmEntity } from "./order-line.entity";
-
 
 @Entity("orders")
 export class OrderOrmEntity {
     @PrimaryColumn("uuid")
     id: string;
 
-
     @ManyToOne(() => UserOrmEntity, (user) => user.orders)
     @JoinColumn({ name: "user_id" })
     user: UserOrmEntity;
 
-
     @Column({ type: "int" })
-    totalPrice: number
+    totalPrice: number;
 
-
-    @OneToMany(() => OrderLineOrmEntity, (order) => order.order, {
+    @OneToMany(() => OrderLineOrmEntity, (line) => line.order, {
         cascade: true,
-        eager: true,
-        orphanedRowAction: 'delete',
+       
     })
-    orderLines: OrderLineOrmEntity[]
-
-
+    orderLines: OrderLineOrmEntity[];
 }

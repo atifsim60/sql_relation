@@ -71,18 +71,38 @@ export class OrderService {
   }
 
   async findAll() {
-    return await this.orderRepo.find()
+    return await this.orderRepo.find(
+      {
+        relations: {
+          orderLines: {
+            product: true,
+          }, user: true
+        },
+      }
+    )
   }
 
   async findOne(id: string) {
-    return await this.orderRepo.findOne({ where: { id } })
+
+    return await this.orderRepo.findOne({
+      where: { id }, relations: {
+        orderLines: {
+          product: true,
+        }, user: true
+      },
+    })
   }
 
+
   async update(id: string, updateOrderDto: UpdateOrderDto) {
+
     const orderExist = await this.orderRepo.findOne({
       where: { id },
       relations: {
-        orderLines: true,
+        orderLines: {
+          product: true,
+        },
+
       },
     });
 
@@ -95,15 +115,16 @@ export class OrderService {
       const productIds = updateOrderDto?.lines?.map(
         (line) => line.product,
       );
+
       orderExist.orderLines = orderExist.orderLines.filter(
         (item) => !productIds?.includes(item.product.id),
       );
 
     }
 
-
     return await this.orderRepo.save(orderExist);
   }
+
   remove(id: number) {
     return `This action removes a #${id} order`;
   }

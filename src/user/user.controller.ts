@@ -6,7 +6,7 @@ import { AttachUserDto } from './dto/attach-user.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -15,11 +15,14 @@ export class UserController {
 
   @Get()
   findAll() {
+
+    console.log("order")
     return this.userService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+    console.log(id)
     return this.userService.findOne(id);
   }
 
@@ -36,10 +39,15 @@ export class UserController {
   @Patch("attach-promos/:userId")
   attachUser(
     @Param("userId") userId: string,
-    @Body() dto:AttachUserDto
-  ){
+    @Body() dto: AttachUserDto
+  ) {
 
-    return this.userService.attachUser(userId,dto)
+    return this.userService.attachUser(userId, dto)
   }
 
+
+  @Patch("remove-details/:id")
+  removeDetails(@Param('id') id: string,) {
+    return this.userService.removeDetails(id);
+  }
 }

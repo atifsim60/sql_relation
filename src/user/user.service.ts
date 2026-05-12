@@ -134,4 +134,21 @@ export class UserService {
 
     return await this.userRepo.save(userExist)
   }
+
+
+  async removeDetails(id: string) {
+    const userExist = await this.userRepo.findOne({ where: { id } })
+
+
+    if (!userExist) {
+      throw new NotFoundException("user not found")
+    }
+
+    console.log(userExist)
+
+
+    userExist.userDetails = null
+
+    return await this.userRepo.save(userExist)
+  }
 }

@@ -26,8 +26,9 @@ export class UserOrmEntity {
   @OneToOne(() => UserDetailsOrmEntity, (details) => details.user, {
     cascade: ["insert", "update"],
     eager: true,
+    nullable: true
   })
-  userDetails!: UserDetailsOrmEntity;
+  userDetails!: UserDetailsOrmEntity | null;
 
   @OneToMany(() => OrderOrmEntity, (order) => order.user)
   orders!: OrderOrmEntity[];
